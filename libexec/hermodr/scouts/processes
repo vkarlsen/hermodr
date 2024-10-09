@@ -1,0 +1,18 @@
+#!/bin/sh
+NAME="processes"
+PSLIST=${processes_list}
+. ${LIBEXEC}/common
+if checkyesno "${NAME}_enable"; then
+	for ps in ${PSLIST};
+	do
+		PSCOUNT=$(ps xa | grep -w -v grep | grep ${ps} | wc -l);
+		moreverbosen "processes: checking for ${ps}: "
+		if [ ${PSCOUNT} -lt 1 ]; then
+			moreverbose "NOT FOUND!"
+			MSG="${ps} not running"
+			alert "${NAME}" "${MSG}"
+		else
+			moreverbose "found."
+		fi;
+	done
+fi

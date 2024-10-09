@@ -1,0 +1,118 @@
+# $NetBSD: rc.subr,v 1.67 2006/10/07 11:25:15 elad Exp $
+#
+# Copyright (c) 1997-2004 The NetBSD Foundation, Inc.
+# All rights reserved.
+#
+# This code is derived from software contributed to The NetBSD Foundation
+# by Luke Mewburn.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#   
+# THIS SOFTWARE IS PROVIDED BY THE NETBSD FOUNDATION, INC. AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+#
+# checkyesno var
+#   Test $1 variable, and warn if not set to YES or NO.
+#   Return 0 if it's "yes" (et al), nonzero otherwise.
+#
+checkyesno()
+{
+	eval _value=\$${1}
+	#echo "checkyesno: $1 is set to $_value."
+	case $_value in
+
+		#   "yes", "true", "on", or "1"
+	[Yy][Ee][Ss]|[Tt][Rr][Uu][Ee]|[Oo][Nn]|1)
+		return 0
+		;;
+
+		#   "no", "false", "off", or "0"
+	[Nn][Oo]|[Ff][Aa][Ll][Ss][Ee]|[Oo][Ff][Ff]|0)
+		return 1
+		;;
+	*)
+		echo "Error: \$${1} is not set properly."
+		return 1
+		;;
+	esac
+}
+
+alert()
+{
+	hostname=$(hostname -s)
+	scoutname=${1}
+	msg=${2}
+	if checkyesno ntfy_enable; then
+		ntfy_send "${hostname}" "${scoutname}" "${msg}"
+	fi
+	if checkyesno stdout_enable; then
+		stdout_send "${hostname}" "${scoutname}" "${msg}"
+	fi
+}
+
+notify()
+{
+	echo "$1"
+}
+
+notifyn()
+{
+	echo -n "$1"
+}
+
+verbose()
+{
+	if checkyesno VERBOSE; then
+		notify "$1"
+	fi
+}
+
+verbosen()
+{
+	if checkyesno VERBOSE; then
+		notifyn "$1"
+	fi
+}
+
+moreverbose()
+{
+	if checkyesno MOREVERBOSE; then
+		notify "$1"
+	fi
+}
+
+moreverbosen()
+{
+	if checkyesno MOREVERBOSE; then
+		notifyn "$1"
+	fi
+}
+
+# Notification drivers:
+stdout_send()
+{
+	notify "${hostname}/${scoutname}: ${msg}"
+}
+
+ntfy_send()
+{
+	${curl} -s -H "Tags: bell" -H "Title: hermodr/${hostname}:${scoutname}" -d "${msg}" ${ntfy_host}/${ntfy_topic} > /dev/null
+}
+

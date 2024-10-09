@@ -1,0 +1,23 @@
+#!/bin/sh
+NAME="zpool"
+. ${LIBEXEC}/common
+if checkyesno "${NAME}_enable"; then
+	FILESYSTEMS=$(df -t ${diskspace_fstypes} | awk '{print $1}' | grep -v ^Filesystem)
+	POOLS=$(zpool list -Ho name)
+	for pool in ${POOLS}; 
+	do
+		moreverbose "zpool: checking pool ${pool}"
+		CAPACITY=$(zpool list -Hpo capacity ${pool})
+		HEALTH=$(zpool list -Ho health ${pool})
+		if [ ${CAPACITY} -gt ${zpool_threshold} ]; then
+			moreverbose "Capacity warning for ${pool}: ${CAPACITY}%"
+			MSG="Capacity warning for ${pool}: ${CAPACITY}%"
+			alert "${NAME}" "${MSG}"
+		fi
+		if [ "${HEALTH}" != "ONLINE" ]; then
+			moreverbose "Health warning for ${pool}: ${HEALTH}"
+			MSG="Health warning for ${pool}: ${HEALTH}"
+			alert "${NAME}" "${MSG}"
+		fi;
+	done
+fi

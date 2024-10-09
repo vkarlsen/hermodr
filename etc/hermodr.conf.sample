@@ -1,0 +1,41 @@
+# This can get very verbose. Turn it off for production use:
+export VERBOSE="YES"
+export MOREVERBOSE="NO"
+
+# Notification drivers:
+export stdout_enable="YES"
+export ntfy_enable="NO"
+# Where to send ntfy alerts, https://ntfy.sh/<ntfy_topic>:
+export ntfy_host="ntfy.sh"
+export ntfy_topic="my_super_secret_topic"
+
+# If this fails, uncomment the line below and specify where curl is located:
+if [ -f /bin/curl ]; then
+	export curl="/bin/curl"
+elif [ -f /usr/local/bin/curl ]; then
+	export curl="/usr/local/bin/curl"
+elif [ -f /opt/local/bin/curl ]; then
+	export curl="/opt/local/bin/curl"
+fi
+#export curl="/opt/bin/curl"
+
+# Enable/disable scouts:
+export processes_enable="YES"
+export diskspace_enable="YES"
+export cpu_enable="YES"
+export cputemp_enable="YES"
+export zpool_enable="YES"
+
+# Scout-specific settings:
+export processes_list="nginx sshd"
+
+export diskspace_threshold=4
+export diskspace_fstypes="zfs,ufs,xfs,vfat,ext,ext2,ext3,ext4"
+export diskspace_blocksize=1073741824
+export diskspace_exclude=""  # future
+
+export cpu_threshold=50
+
+export cputemp_threshold=65
+
+export zpool_threshold=50

@@ -1,0 +1,16 @@
+#!/bin/sh
+NAME="diskspace"
+. ${LIBEXEC}/common
+if checkyesno "${NAME}_enable"; then
+	export BLOCKSIZE=${diskspace_blocksize}
+	FILESYSTEMS=$(df -t ${diskspace_fstypes} | awk '{print $1}' | grep -v ^Filesystem)
+	for fs in ${FILESYSTEMS};
+	do
+		FREESPACE=$(df ${fs} | tail -1 | awk '{print $4}')
+		moreverbose "diskspace: checking ${fs}: ${FREESPACE} GB"
+		if [ ${FREESPACE} -lt $diskspace_threshold ]; then
+			MSG="Low space: ${fs} ${FREESPACE} GB free. ${FREESPACE} is less than ${diskspace_threshold}!"
+			alert "${NAME}" "${MSG}"
+		fi;
+	done
+fi

@@ -1,0 +1,41 @@
+#!/bin/sh
+NAME="cputemp"
+. ${LIBEXEC}/common
+if checkyesno "${NAME}_enable"; then
+	NUMCPUS=$(sysctl -n kern.smp.cpus)
+	moreverbose "Found ${NUMCPUS} cpus"
+	COUNT=0
+	CRITICAL=0
+	HIGHEST=0
+	moreverbosen "Detecting operating system..."
+	OS=$(uname)
+	moreverbose "${OS}"
+	case ${OS} in
+		NetBSD)
+	while [ ${COUNT} -lt ${NUMCPUS} ]
+	do
+		case ${OS} in
+			FreeBSD)
+				curtemp=$(sysctl -n dev.cpu.${COUNT}.temperature | cut -d. -f1)
+				;;
+			SunOS)
+				curtemp=$(/usr/lib/fm/fmd/fmtopo -V *sensor=temp | grep reading | awk '{print $3}' | cut -d. -f1)
+				;;
+			Linux)
+				# Linux: cat /sys/class/thermal/<thermal_zoneNumber>/type ?
+				;;
+		esac
+		if [ "${curtemp}" -gt ${HIGHEST} ]; then
+			HIGHEST=${curtemp}
+		fi
+		if [ "${curtemp}" -gt ${cputemp_threshold} ]; then
+			moreverbose "cpu temperature ${curtemp} found above threshold ${cputemp_threshold}"
+			CRITICAL=1
+		fi
+		COUNT=$((${COUNT}+1))
+	done
+
+	if [ "${CRITICAL}" -eq 1 ]; then
+		alert "${NAME}" "too high: ${HIGHEST}C"
+	fi
+fi

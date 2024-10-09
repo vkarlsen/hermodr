@@ -1,0 +1,34 @@
+#!/bin/sh
+NAME="cpu"
+. ${LIBEXEC}/common
+if checkyesno "${NAME}_enable"; then
+	moreverbosen "Detecting operating system..."
+	OS=$(uname)
+	moreverbose "${OS}"
+	moreverbosen "cpu: checking usage: "
+	case ${OS} in
+		NetBSD)
+			IDLE=$(iostat -C | tail -n 1 | awk '{print $5}')
+			;;
+		FreeBSD)
+			IDLE=$(iostat -t proc | tail -n 1 | awk '{print $7}')
+			;;
+		DragonFly)
+			IDLE=$(iostat -t proc | tail -n 1 | awk '{print $7}')
+			;;
+		OpenBSD)
+			IDLE=$(iostat -C | tail -n 1 | awk '{print $6}')
+			;;
+		SunOS)
+			IDLE=$(iostat -c | tail -n 1 | awk '{print $4}')
+			;;
+		Linux)
+			IDLE=$(top -b -n 1 | grep -m 1 id | cut -d" " -f10,11 | cut -d, -f2 | cut -d. -f1)
+			;;
+	esac
+	USAGE=$((100 - ${IDLE}))
+	moreverbose ${USAGE}%
+	if [ ${USAGE} -gt ${cpu_threshold} ]; then
+		alert "${NAME}" "cpu usage: ${USAGE}%"
+	fi
+fi

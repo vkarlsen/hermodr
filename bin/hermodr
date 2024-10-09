@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# Find config file:
+if [ -f /etc/hermodr.conf ]; then
+	CONF="/etc/hermodr.conf"
+	BASEDIR="/"
+elif [ -f /usr/local/etc/hermodr.conf ]; then
+	CONF="/usr/local/etc/hermodr.conf"
+	BASEDIR="/usr/local/"
+elif [ -f $(dirname $0)/../etc/hermodr.conf ]; then
+	CONF=$(dirname $0)/../etc/hermodr.conf
+	BASEDIR="$(dirname $0)/../"
+else
+	echo "ERROR: No hermodr.conf file found in /etc, /usr/local/etc or <hermodr dir>/etc."
+	return 1
+fi
+
+export BASEDIR
+export CONF
+export LIBEXEC="${BASEDIR}libexec/hermodr"
+
+# Load config and functions:
+. ${CONF}
+. ${LIBEXEC}/common
+
+verbose "Starting scouts..."
+
+# Run the enabled scouts:
+for file in ${LIBEXEC}/scouts/*; do
+	verbose "Running scout: ${file}..."
+    [ -f "$file" ] && [ -x "$file" ] && "$file"
+done
+
+verbose "Finished."
