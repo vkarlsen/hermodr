@@ -2,7 +2,6 @@
 NAME="zpool"
 . ${LIBEXEC}/common
 if checkyesno "${NAME}_enable"; then
-	FILESYSTEMS=$(df -t ${diskspace_fstypes} | awk '{print $1}' | grep -v ^Filesystem)
 	POOLS=$(zpool list -Ho name)
 	for pool in ${POOLS}; 
 	do
