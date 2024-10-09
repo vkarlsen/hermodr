@@ -22,6 +22,10 @@ Currently, it only checks for:
 
 New checks are welcome!
 
+## Dependencies
+- bourne-compatible shell
+- curl
+
 ## Installation
 It can be run from its own directory, or it can be installed system-wide
 under a `PREFIX` like `/usr/local`.
