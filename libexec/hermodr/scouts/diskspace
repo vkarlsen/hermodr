@@ -9,7 +9,7 @@ if checkyesno "${NAME}_enable"; then
 		FREESPACE=$(df ${fs} | tail -1 | awk '{print $4}')
 		moreverbose "diskspace: checking ${fs}: ${FREESPACE} GB"
 		if [ ${FREESPACE} -lt $diskspace_threshold ]; then
-			MSG="Low space: ${fs} ${FREESPACE} GB free. ${FREESPACE} is less than ${diskspace_threshold}!"
+			MSG="Low space: ${fs} ${FREESPACE} GB free. Threshold: ${diskspace_threshold} GB."
 			alert "${NAME}" "${MSG}"
 		fi;
 	done
