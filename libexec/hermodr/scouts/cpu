@@ -11,7 +11,7 @@ if checkyesno "${NAME}_enable"; then
 			IDLE=$(iostat -C | tail -n 1 | awk '{print $5}')
 			;;
 		FreeBSD)
-			IDLE=$(iostat -t proc | tail -n 1 | awk '{print $7}')
+			IDLE=$(top | head -n 3 | tail -n 1 | awk '{print $10}' | awk -F. '{print $1}')
 			;;
 		DragonFly)
 			IDLE=$(iostat -t proc | tail -n 1 | awk '{print $7}')
@@ -20,10 +20,16 @@ if checkyesno "${NAME}_enable"; then
 			IDLE=$(iostat -C | tail -n 1 | awk '{print $6}')
 			;;
 		SunOS)
-			IDLE=$(iostat -c | tail -n 1 | awk '{print $4}')
+			IDLES=$(mpstat | grep -v CPU | awk '{print $16}')
+			IDLE=0
+			for curidle in ${IDLES}; do
+				if [ "${curidle}" -gt ${IDLE} ]; then
+					IDLE=${curidle}
+				fi
+			done
 			;;
 		Linux)
-			IDLE=$(top -b -n 1 | grep -m 1 id | cut -d" " -f10,11 | cut -d, -f2 | cut -d. -f1)
+			IDLE=$(top -b -n 1 | head -n 3 | tail -n 1 | awk -F ',' '{print $4}' | awk '{print $1}' | awk -F. '{print $1}')
 			;;
 	esac
 	USAGE=$((100 - ${IDLE}))
