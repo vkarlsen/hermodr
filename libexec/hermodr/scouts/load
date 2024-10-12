@@ -1,0 +1,15 @@
+#!/bin/sh
+NAME="load"
+. ${LIBEXEC}/common
+if checkyesno "${NAME}_enable"; then
+	moreverbosen "Getting load..."
+	LOAD=$(uptime | awk '{print $10}' | tr -d ,)
+	moreverbose ${LOAD}
+	LOADCHECK=$(echo "${LOAD} > ${load_threshold}" | bc)
+	if [ "${LOADCHECK}" -eq 1 ]; then
+		moreverbose "Load too high: ${LOAD} > ${load_threshold}"
+		alert "${NAME}" "load: ${LOAD}"
+	else
+		moreverbose "Load ok: ${LOAD} < ${load_threshold}"
+	fi
+fi
