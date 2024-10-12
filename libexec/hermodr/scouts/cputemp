@@ -27,7 +27,15 @@ if checkyesno "${NAME}_enable"; then
 			;;
 		SunOS)
 			alltemps=$(/usr/lib/fm/fmd/fmtopo -V *sensor=temp | grep reading | awk '{print $3}' | cut -d. -f1)
-			# TODO
+			for curtemp in ${alltemps}; do
+				if [ "${curtemp}" -gt ${HIGHEST} ]; then
+					HIGHEST=${curtemp}
+				fi
+				if [ "${curtemp}" -gt ${cputemp_threshold} ]; then
+					moreverbose "cpu temperature ${curtemp} found above threshold ${cputemp_threshold}"
+					CRITICAL=1
+				fi
+			done
 			;;
 		Linux)
 			# TODO
