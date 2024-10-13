@@ -14,6 +14,7 @@ and remember to change `ntfy_topic` to your own topic. It can also alert to
 All files in the `scouts/` directory need to have the executable bit set.
 
 Currently, it only checks for:
+- High load avg
 - Low disk space
 - Non-running processes (specific ones)
 - High CPU usage
@@ -22,9 +23,14 @@ Currently, it only checks for:
 
 New checks are welcome!
 
+## Principles
+- Simple: Easy to set up, easy to use, easy to modify
+- Portable: Keep dependencies to a minimum
+
 ## Dependencies
 - bourne-compatible shell
 - curl
+- Base components like bc, grep, awk, top
 
 ## Installation
 It can be run from its own directory, or it can be installed system-wide
