@@ -8,16 +8,16 @@ if checkyesno "${NAME}_enable"; then
 	moreverbosen "cpu: checking usage: "
 	case ${OS} in
 		NetBSD)
-			IDLE=$(iostat -C | tail -n 1 | awk '{print $5}')
+			IDLE=$(top | head -n 3 | tail -n 1 | awk -F, '{print $5}' | awk -F. '{print $1}' | awk -F'%' '{print $1}')
 			;;
 		FreeBSD)
-			IDLE=$(top | head -n 3 | tail -n 1 | awk '{print $10}' | awk -F. '{print $1}')
+			IDLE=$(top | head -n 3 | tail -n 1 | awk -F, '{print $5}' | awk -F. '{print $1}' | awk -F'%' '  {print $1}')
 			;;
 		DragonFly)
-			IDLE=$(iostat -t proc | tail -n 1 | awk '{print $7}')
+			IDLE=$(top | head -n 3 | tail -n 1 | awk -F, '{print $5}' | awk -F. '{print $1}' | awk -F'%' '  {print $1}')
 			;;
 		OpenBSD)
-			IDLE=$(iostat -C | tail -n 1 | awk '{print $6}')
+			IDLE=$(top | head -n 3 | tail -n 1 | awk -F, '{print $6}' | awk -F. '{print $1}' | awk -F'%' '  {print $1}')
 			;;
 		SunOS)
 			IDLES=$(mpstat | grep -v CPU | awk '{print $16}')
