@@ -20,22 +20,25 @@ fi
 #export curl="/opt/bin/curl"
 
 # Enable/disable scouts:
-export processes_enable="YES"
-export diskspace_enable="YES"
 export cpu_enable="YES"
 export cputemp_enable="YES"
+export diskspace_enable="YES"
+export load_enable="YES"
+export processes_enable="YES"
 export zpool_enable="YES"
 
 # Scout-specific settings:
-export processes_list="nginx sshd"
+export cpu_threshold=50
+
+export cputemp_threshold=65
 
 export diskspace_threshold=4
 export diskspace_fstypes="zfs,ufs,xfs,vfat,ext,ext2,ext3,ext4"
 export diskspace_blocksize=1073741824
 export diskspace_exclude=""  # future
 
-export cpu_threshold=50
+export load_threshold=4
 
-export cputemp_threshold=65
+export processes_list="nginx sshd"
 
 export zpool_threshold=50

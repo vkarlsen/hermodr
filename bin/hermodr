@@ -20,6 +20,7 @@ export CONF
 export LIBEXEC="${BASEDIR}libexec/hermodr"
 
 # Load config and functions:
+. ${LIBEXEC}/defaults.conf
 . ${CONF}
 . ${LIBEXEC}/common
 
