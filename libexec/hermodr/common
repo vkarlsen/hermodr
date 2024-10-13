@@ -35,7 +35,6 @@
 checkyesno()
 {
 	eval _value=\$${1}
-	#echo "checkyesno: $1 is set to $_value."
 	case $_value in
 
 		#   "yes", "true", "on", or "1"
@@ -48,7 +47,9 @@ checkyesno()
 		return 1
 		;;
 	*)
-		echo "Error: \$${1} is not set properly."
+		if [ -n "${VERBOSE}" ]; then
+			echo "Warning: \$${1} is not set properly."
+		fi
 		return 1
 		;;
 	esac
