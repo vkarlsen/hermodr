@@ -114,6 +114,10 @@ stdout_send()
 
 ntfy_send()
 {
-	${curl} -s -H "Tags: bell" -H "Title: hermodr/${hostname}:${scoutname}" -d "${msg}" ${ntfy_host}/${ntfy_topic} > /dev/null
+	if [ -n ${ntfy_token} ]; then
+		${curl} -s -H "Authorization: Bearer ${ntfy_token}" -H "Tags: bell" -H "Title: hermodr/${hostname}:${scoutname}" -d "${msg}" ${ntfy_host}/${ntfy_topic} > /dev/null
+	else
+		${curl} -s ${AUTH} -H "Tags: bell" -H "Title: hermodr/${hostname}:${scoutname}" -d "${msg}" ${ntfy_host}/${ntfy_topic} > /dev/null
+	fi
 }
 
