@@ -4,12 +4,13 @@ NAME="letsencrypt"
 if checkyesno "${NAME}_enable"; then
 	EPOCH=$((${letsencrypt_threshold}*86400))
 	for cert in `find ${letsencrypt_certdir}/* -type d`; do
+		BASENAME=$(basename ${cert})
 		moreverbose "letsencrypt: checking certificate ${cert}"
 		EXPIRY=$(openssl x509 -in ${cert}/cert.pem -checkend ${EPOCH})
 		echo $EXPIRY;
 		if [ "${EXPIRY}" == "Certificate will expire" ]; then
 			moreverbose "Expiry warning for ${cert}: ${EXPIRY} days"
-			MSG="Expiry warning for ${cert}: ${letsencrypt_threshold} days"
+			MSG="Expiry warning for ${BASENAME}: ${letsencrypt_threshold} days"
 			alert "${NAME}" "${MSG}"
 		fi
 	done
