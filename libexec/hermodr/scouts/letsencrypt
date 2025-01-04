@@ -3,7 +3,7 @@ NAME="letsencrypt"
 . ${LIBEXEC}/common
 if checkyesno "${NAME}_enable"; then
 	EPOCH=$((${letsencrypt_threshold}*86400))
-	for cert in `find ${letsencrypt_certdir}/* -type d`; do
+	for cert in `find ${letsencrypt_certdir}/* -type d -maxdepth 1`; do
 		BASENAME=$(basename ${cert})
 		moreverbose "letsencrypt: checking certificate ${cert}"
 		EXPIRY=$(openssl x509 -in ${cert}/cert.pem -checkend ${EPOCH})
