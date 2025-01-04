@@ -1,0 +1,16 @@
+#!/bin/sh
+NAME="letsencrypt"
+. ${LIBEXEC}/common
+if checkyesno "${NAME}_enable"; then
+	CERTS=$(certbot certificates | grep "Certificate Name" | sed 's/  Certificate Name: //g')
+	for cert in ${CERTS}; 
+	do
+		moreverbose "letsencrypt: checking certificate ${cert}"
+		EXPIRY=$(certbot certificates -d ${cert} | grep Expiry | awk {'print $6'})
+		if [ ${EXPIRY} -lt ${letsencrypt_threshold} ]; then
+			moreverbose "Expiry warning for ${cert}: ${EXPIRY} days"
+			MSG="Expiry warning for ${cert}: ${EXPIRY} days"
+			alert "${NAME}" "${MSG}"
+		fi
+	done
+fi
