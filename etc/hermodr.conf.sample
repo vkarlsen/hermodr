@@ -23,6 +23,7 @@ fi
 export cpu_enable="YES"
 export cputemp_enable="YES"
 export diskspace_enable="YES"
+export letsencrypt_enable="NO"
 export load_enable="YES"
 export processes_enable="YES"
 export zpool_enable="YES"
@@ -36,6 +37,8 @@ export diskspace_threshold=4
 export diskspace_fstypes="zfs,ufs,xfs,vfat,ext,ext2,ext3,ext4"
 export diskspace_blocksize=1073741824
 export diskspace_exclude=""  # future
+
+export letsencrypt_threshold=7
 
 export load_threshold=4
 
