@@ -15,6 +15,7 @@ All files in the `scouts/` directory need to have the executable bit set.
 
 Currently, it only checks for:
 - High load avg
+- Letsencrypt certificates about to expire
 - Low disk space
 - Non-running processes (specific ones)
 - High CPU usage
